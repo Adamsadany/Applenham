@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8Lenham Social Network 🍋</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .message {
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            max-width: 80%;
+        }
+        .sent {
+            background-color: #e0f7fa;
+            color: #00838f;
+            margin-left: auto;
+            text-align: right;
+        }
+        .received {
+            background-color: #f5f5f5;
+            color: #333;
+            margin-right: auto;
+            text-align: left;
+        }
+        .tab-link.active {
+            background-color: #fef08a; /* Tailwind's amber-300 */
+            color: #1e293b; /* Tailwind's gray-900 */
+            border-bottom: 2px solid #1e293b;
+        }
+        .tab-link:hover {
+            background-color: #fef08a; /* Tailwind's amber-300 on hover */
+            color: #1e293b;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-yellow-500 text-white py-4 text-center rounded-b-md shadow-md flex items-center justify-center">
+        <span class="text-3xl mr-2">🍋</span> <h1 class="text-2xl font-semibold">8Lenham</h1>
+    </header>
+
+    <main class="container mx-auto mt-6 p-4">
+        <div id="login-register-container" class="bg-white rounded-md shadow-lg p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-3 text-gray-800">Login / Register</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="login-email" name="login-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="login-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="login-password" name="login-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
+            </form>
+            <form id="register-form" class="space-y-4 mt-4">
+                <div>
+                    <label for="register-email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="register-email" name="register-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="register-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="register-password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="register-password" name="register-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="register-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Register</button>
+            </form>
+        </div>
+
+        <div id="main-content" style="display: none;">
+            <div class="flex space-x-4 mb-4">
+                <button class="tab-link bg-white rounded-md shadow-md py-2 px-4 font-semibold text-gray-700" data-target="posts-tab">Posts</button>
+                <button class="tab-link bg-white rounded-md shadow-md py-2 px-4 font-semibold text-gray-700" data-target="dm-tab">Direct Messages</button>
+            </div>
+
+            <div id="posts-tab" class="bg-white rounded-md shadow-lg p-6">
+                <div id="post-form-container" class="mb-4">
+                    <h2 class="text-xl font-semibold mb-3 text-gray-800">Create a New Post</h2>
+                    <form id="post-form" class="space-y-4">
+                        <div>
+                            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                            <input type="text" id="title" name="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <div id="title-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                        </div>
+                        <div>
+                            <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content:</label>
+                            <textarea id="content" name="content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 resize-y" required></textarea>
+                            <div id="content-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                        </div>
+                         <div>
+                            <label for="post-color" class="block text-gray-700 text-sm font-bold mb-2">Text Color:</label>
+                            <input type="color" id="post-color" name="post-color" value="#000000" class="rounded">
+                        </div>
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Post</button>
+                    </form>
+                </div>
+                <div id="posts-container" class="mt-8">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Latest Posts</h2>
+                    <div id="posts" class="space-y-4">
+                        </div>
+                </div>
+            </div>
+
+            <div id="dm-tab" class="bg-white rounded-md shadow-lg p-6" style="display: none;">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800">Direct Messages</h2>
+                 <div id="dm-search-container" class="mb-4">
+                    <label for="dm-recipient-email" class="block text-gray-700 text-sm font-bold mb-2">Recipient Email:</label>
+                    <div class="flex space-x-2">
+                        <input type="email" id="dm-recipient-email" name="dm-recipient-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required placeholder="Enter recipient email...">
+                        <button id="start-dm" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Start DM</button>
+                    </div>
+                    <div id="dm-recipient-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div id="dm-messages" class="space-y-2 overflow-y-auto max-h-64 border rounded-md p-2 mb-4">
+                    </div>
+                <form id="dm-form" class="flex space-x-2">
+                    <input type="text" id="dm-message-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required placeholder="Type your message...">
+                     <input type="color" id="dm-message-color" name="dm-message-color" value="#000000" class="rounded">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Send</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="message-box" class="fixed bottom-4 left-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md" style="display: none;">
+        <strong class="font-bold">Success!</strong>
+        <span class="block sm:inline" id="message-text"></span>
+    </div>
+
+    <div id="error-box" class="fixed bottom-4 left-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md" style="display: none;">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline" id="error-text"></span>
+    </div>
+
+    <script>
+       const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const postForm = document.getElementById('post-form');
+        const postsContainer = document.getElementById('posts');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const errorBox = document.getElementById('error-box');
+        const errorText = document.getElementById('error-text');
+        const titleInput = document.getElementById('title');
+        const contentInput = document.getElementById('content');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const registerEmailInput = document.getElementById('register-email');
+        const registerPasswordInput = document.getElementById('register-password');
+        const titleError = document.getElementById('title-error');
+        const contentError = document.getElementById('content-error');
+        const loginEmailError = document.getElementById('login-email-error');
+        const loginPasswordError = document.getElementById('login-password-error');
+        const registerEmailError = document.getElementById('register-email-error');
+        const registerPasswordError = document.getElementById('register-password-error');
+
+        const loginRegisterContainer = document.getElementById('login-register-container');
+        const postFormContainerElement = document.getElementById('post-form-container');
+        const postsContainerElement = document.getElementById('posts-container');
+        const dmContainer = document.getElementById('dm-container');
+        const dmRecipientEmailInput = document.getElementById('dm-recipient-email');
+        const startDmButton = document.getElementById('start-dm');
+        const dmMessagesContainer = document.getElementById('dm-messages');
+        const dmForm = document.getElementById('dm-form');
+        const dmMessageInput = document.getElementById('dm-message-input');
+        const dmRecipientError = document.getElementById('dm-recipient-error');
+        const postColorInput = document.getElementById('post-color');
+        const dmMessageColorInput = document.getElementById('dm-message-color');
+
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabs = document.querySelectorAll('[id$="-tab"]');
+        const mainContent = document.getElementById('main-content');
+
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser')) || null;
+        let posts = JSON.parse(localStorage.getItem('posts')) || [];
+        let messages = JSON.parse(localStorage.getItem('messages')) || {};
+
+        function showMessage(message) {
+            messageText.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorBox.style.display = 'block';
+            setTimeout(() => {
+                errorBox.style.display = 'none';
+            }, 3000);
+        }
+
+        function validateEmail(email) {
+            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function validateForm(formType) {
+            let isValid = true;
+            if (formType === 'login') {
+                if (!loginEmailInput.value.trim()) {
+                    loginEmailError.textContent = 'Email is required';
+                    loginEmailError.style.display = 'block';
+                    isValid = false;
+                } else if (!validateEmail(loginEmailInput.value.trim())) {
+                    loginEmailError.textContent = 'Invalid email format';
+                    loginEmailError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    loginEmailError.style.display = 'none';
+                }
+                if (!loginPasswordInput.value.trim()) {
+                    loginPasswordError.textContent = 'Password is required';
+                    loginPasswordError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    loginPasswordError.style.display = 'none';
+                }
+            } else if (formType === 'register') {
+                if (!registerEmailInput.value.trim()) {
+                    registerEmailError.textContent = 'Email is required';
+                    registerEmailError.style.display = 'block';
+                    isValid = false;
+                } else if (!validateEmail(registerEmailInput.value.trim())) {
+                    registerEmailError.textContent = 'Invalid email format';
+                    registerEmailError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    registerEmailError.style.display = 'none';
+                }
+                if (!registerPasswordInput.value.trim()) {
+                    registerPasswordError.textContent = 'Password is required';
+                    registerPasswordError.style.display = 'block';
+                    isValid = false;
+                } else if (registerPasswordInput.value.trim().length < 6) {
+                    registerPasswordError.textContent = 'Password must be at least 6 characters';
+                    registerPasswordError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    registerPasswordError.style.display = 'none';
+                }
+            } else if (formType === 'post') {
+                if (!titleInput.value.trim()) {
+                    titleError.textContent = 'Title is required';
+                    titleError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    titleError.style.display = 'none';
+                }
+
+                if (!contentInput.value.trim()) {
+                    contentError.textContent = 'Content is required';
+                    contentError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    contentError.style.display = 'none';
+                }
+            }
+            return isValid;
+        }
+
+        function displayPosts() {
+            postsContainer.innerHTML = '<h2 class="text-xl font-semibold mb-4 text-gray-800">Latest Posts</h2>';
+            posts.slice().reverse().forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('bg-white', 'border', 'rounded-md', 'shadow-sm', 'p-4', 'mb-4');
+                postDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900" style="color: ${post.color}">${post.title}</h3>
+                    <p class="text-gray-700 leading-relaxed" style="color: ${post.color}">${post.content}</p>
+                    <p class="text-gray-500 text-sm mt-2">Posted by: ${post.user} on ${post.date}</p>
+                    <div class="mt-4 space-y-2">
+                        <h4 class="text-md font-semibold text-gray-800">Comments:</h4>
+                        <div id="comments-${post.id}" class="space-y-2">
+                            ${post.comments?.map(comment => `<div class="bg-gray-100 rounded-md p-2 text-gray-700 text-sm"><span class="font-semibold">${comment.user}:</span> <span style="color: ${comment.color}">${comment.text}</span></div>`).join('') || '<p class="text-gray-500 text-sm">No comments yet.</p>'}
+                        </div>
+                        <form class="comment-form space-x-2" data-post-id="${post.id}">
+                            <input type="text" class="comment-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required placeholder="Add a comment...">
+                            <input type="color" name="comment-color" value="#000000" class="rounded comment-color-input">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Comment</button>
+                        </form>
+                    </div>
+                `;
+                postsContainer.appendChild(postDiv);
+
+                const commentForm = postDiv.querySelector('.comment-form');
+                commentForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const commentInput = event.target.querySelector('.comment-input');
+                    const commentColorInput = event.target.querySelector('.comment-color-input');
+                    const commentText = commentInput.value.trim();
+                    const commentColor = commentColorInput.value;
+                    if (!commentText) return;
+
+                    const postId = event.target.dataset.postId;
+                    const post = posts.find(p => p.id === postId);
+                    if (post) {
+                        post.comments = post.comments || [];
+                        post.comments.push({ user: loggedInUser.email, text: commentText, color: commentColor });
+                        savePosts();
+                        displayPosts();
+                    }
+                    commentInput.value = '';
+                });
+            });
+        }
+
+        function loadPosts() {
+            const savedPosts = localStorage.getItem('posts');
+            if (savedPosts) {
+                try {
+                    posts = JSON.parse(savedPosts);
+                    posts.forEach(post => {
+                        if (!post.id) {
+                            post.id = crypto.randomUUID();
+                        }
+                    });
+                    displayPosts();
+                } catch (error) {
+                    console.error('Failed to parse saved posts:', error);
+                    posts = [];
+                }
+            } else {
+                posts = [];
+                localStorage.setItem('posts', JSON.stringify(posts));
+            }
+        }
+
+        function savePosts() {
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
+
+        function saveUsers() {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function saveLoggedInUser() {
+            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+        }
+
+        function loadLoggedInUser() {
+            const savedUser = localStorage.getItem('loggedInUser');
+            if (savedUser) {
+                try {
+                    loggedInUser = JSON.parse(savedUser);
+                } catch (error) {
+                    console.error('Failed to parse logged in user:', error);
+                    loggedInUser = null;
+                }
+            }
+        }
+
+        function displayMessages(recipientEmail) {
+            dmMessagesContainer.innerHTML = '';
+            const conversationKey = [loggedInUser.email, recipientEmail].sort().join('-');
+            const conversation = messages[conversationKey] || [];
+            conversation.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', message.sender === loggedInUser.email ? 'sent' : 'received');
+                messageDiv.style.color = message.color;
+                messageDiv.textContent = `${message.sender === loggedInUser.email ? 'You: ' : `${message.sender}: `}${message.text}`;
+                dmMessagesContainer.appendChild(messageDiv);
+            });
+            dmMessagesContainer.scrollTop = dmMessagesContainer.scrollHeight;
+        }
+
+       function saveMessages() {
+            localStorage.setItem('messages', JSON.stringify(messages));
+        }
+
+        function loadMessages() {
+             const savedMessages = localStorage.getItem('messages');
+              if (savedMessages) {
+                try {
+                    messages = JSON.parse(savedMessages);
+                } catch (error) {
+                  console.error("Failed to parse messages", error);
+                  messages = {};
+                }
+              }
+        }
+
+        // Event Listeners
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!validateForm('login')) {
+                return;
+            }
+            const email = loginEmailInput.value.trim();
+            const password = loginPasswordInput.value.trim();
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                loggedInUser = user;
+                saveLoggedInUser();
+                showMessage('Logged in successfully!');
+                loginRegisterContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                loadPosts();
+                showTab('posts-tab');
+            } else {
+                showError('Invalid credentials. Please try again.');
+            }
+            loginEmailInput.value = '';
+            loginPasswordInput.value = '';
+        });
+
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!validateForm('register')) {
+                return;
+            }
+            const email = registerEmailInput.value.trim();
+            const password = registerPasswordInput.value.trim();
+            if (users.find(u => u.email === email)) {
+                showError('Email already exists. Please use a different email.');
+                return;
+            }
+            users.push({ email, password });
+            saveUsers();
+            loggedInUser = { email, password };
+            saveLoggedInUser();
+            showMessage('Registered successfully! You are now logged in.');
+            loginRegisterContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+            loadPosts();
+            showTab('posts-tab');
+            registerEmailInput.value = '';
+            registerPasswordInput.value = '';
+        });
+
+        postForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!validateForm('post')) {
+                return;
+            }
+            const title = titleInput.value;
+            const content = contentInput.value;
+            const date = new Date().toLocaleDateString();
+            const user = loggedInUser.email;
+            const color = postColorInput.value;
+            const newPost = {
+                id: crypto.randomUUID(),
+                title,
+                content,
+                date,
+                user,
+                color,
+                comments: []
+            };
+            posts.push(newPost);
+            savePosts();
+            displayPosts();
+            titleInput.value = '';
+            contentInput.value = '';
+            postColorInput.value = '#000000';
+            showMessage('Your post has been added successfully!');
+        });
+
+        startDmButton.addEventListener('click', () => {
+            const recipientEmail = dmRecipientEmailInput.value.trim();
+             if (!validateEmail(recipientEmail)) {
+                    dmRecipientError.textContent = 'Invalid email format';
+                    dmRecipientError.style.display = 'block';
+                    return;
+             }
+            if (recipientEmail === loggedInUser.email) {
+                showError("You can't DM yourself!");
+                return;
+            }
+            const recipient = users.find(u => u.email === recipientEmail);
+            if (!recipient) {
+                showError('Recipient email does not exist.');
+                return;
+            }
+            dmRecipientError.style.display = 'none';
+            displayMessages(recipientEmail);
+        });
+
+        dmForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const recipientEmail = document.getElementById('dm-recipient-email').value.trim();
+            const text = dmMessageInput.value.trim();
+            const color = dmMessageColorInput.value;
+            if (!text) return;
+
+            const sender = loggedInUser.email;
+            const message = { sender, text, color };
+            const conversationKey = [sender, recipientEmail].sort().join('-');
+
+            messages[conversationKey] = messages[conversationKey] || [];
+            messages[conversationKey].push(message);
+            saveMessages();
+            displayMessages(recipientEmail);
+            dmMessageInput.value = '';
+            dmMessageColorInput.value = '#000000';
+        });
+
+        function showTab(tabId) {
+            tabs.forEach(tab => tab.style.display = 'none');
+            tabLinks.forEach(tabLink => tabLink.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            const tabLink = document.querySelector(`[data-target="${tabId}"]`);
+            tabLink.classList.add('active');
+        }
+
+        tabLinks.forEach(tabLink => {
+            tabLink.addEventListener('click', (event) => {
+                const target = event.target.dataset.target;
+                showTab(target);
+            });
+        });
+
+        // Initial Setup
+        loadLoggedInUser();
+        loadMessages();
+        if (loggedInUser) {
+            loginRegisterContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+            loadPosts();
+            showTab('posts-tab');
+        }
+    </script>
+</body>
+</html>
